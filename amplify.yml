@@ -40,7 +40,6 @@ frontend:
         - sass --embedded --version
 
         # Install Node.JS dependencies
-        - npm ci --cache .npm --prefer-offline
         - "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --cache .npm --prefer-offline || true"
 
         # https://github.com/gohugoio/hugo/issues/9810
