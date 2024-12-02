@@ -1,15 +1,15 @@
 version: 1
 env:
   variables:
-    # Versions
+    # Application versions
     DART_SASS_VERSION: 1.81.0
     GO_VERSION: 1.23.3
     HUGO_VERSION: 0.139.3
+    # Time zone
     TZ: America/Los_Angeles
-
-    # File caches
-    HUGO_CACHES_IMAGES_DIR: :resourceDir/_gen
-    HUGO_CACHES_IMAGES_MAXAGE: 720h
+    # Cache
+    HUGO_CACHEDIR: ${PWD}/.hugo
+    NPM_CONFIG_CACHE: ${PWD}/.npm
 frontend:
   phases:
     preBuild:
@@ -40,7 +40,7 @@ frontend:
         - sass --embedded --version
 
         # Install Node.JS dependencies
-        - "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --cache .npm --prefer-offline || true"
+        - "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --prefer-offline || true"
 
         # https://github.com/gohugoio/hugo/issues/9810
         - git config --add core.quotepath false
@@ -54,5 +54,5 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - .npm/**/*
-      - resources/**/*
+      - ${HUGO_CACHEDIR}/**/*
+      - ${NPM_CONFIG_CACHE}/**/*
