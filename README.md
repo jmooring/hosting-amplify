@@ -1,6 +1,8 @@
-# Hosting Test - Cloudflare Pages
+# Hosting Test - Amplify
 
-This is a test of hosting a Hugo site on Cloudflare Pages.
+This is a test of hosting a Hugo site on Amplify.
+
+Requires Hugo v0.146.7 or later.
 
 This site:
 

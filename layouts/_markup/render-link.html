@@ -1,7 +1,7 @@
-{{- /* Last modified: 2024-08-09T14:24:24-07:00 */}}
+{{- /* Last modified: 2025-04-15T09:08:34-07:00 */}}
 
 {{- /*
-Copyright 2023 Veriphor, LLC
+Copyright 2025 Veriphor LLC
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License. You may obtain a copy of
@@ -81,7 +81,7 @@ either of these shortcodes in conjunction with this render hook.
 {{- $renderHookName := "link" }}
 
 {{- /* Verify minimum required version. */}}
-{{- $minHugoVersion := "0.125.6" }}
+{{- $minHugoVersion := "0.146.2" }}
 {{- if lt hugo.Version $minHugoVersion }}
   {{- errorf "The %q render hook requires Hugo v%s or later." $renderHookName $minHugoVersion }}
 {{- end }}
@@ -98,12 +98,7 @@ either of these shortcodes in conjunction with this render hook.
 {{- end }}
 
 {{- /* Determine content path for warning and error messages. */}}
-{{- $contentPath := "" }}
-{{- with .Page.File }}
-  {{- $contentPath = .Path }}
-{{- else }}
-  {{- $contentPath = .Path }}
-{{- end }}
+{{- $contentPath := .Page.String }}
 
 {{- /* Parse destination. */}}
 {{- $u := urls.Parse .Destination }}
@@ -136,29 +131,23 @@ either of these shortcodes in conjunction with this render hook.
         {{- $href = printf "%s#%s" $href . }}
       {{- end }}
       {{- $attrs = dict "href" $href }}
+    {{- else with $.PageInner.Resources.Get $u.Path }}
+      {{- /* Destination is a page resource; drop query and fragment. */}}
+      {{- $attrs = dict "href" .RelPermalink }}
+    {{- else with (and (ne $.Page.BundleType "leaf") ($.Page.CurrentSection.Resources.Get $u.Path)) }}
+      {{- /* Destination is a section resource, and current page is not a leaf bundle. */}}
+      {{- $attrs = dict "href" .RelPermalink }}
+    {{- else with resources.Get $u.Path }}
+      {{- /* Destination is a global resource; drop query and fragment. */}}
+      {{- $attrs = dict "href" .RelPermalink }}
     {{- else }}
-      {{- with $.PageInner.Resources.Get $u.Path }}
-        {{- /* Destination is a page resource; drop query and fragment. */}}
-        {{- $attrs = dict "href" .RelPermalink }}
-      {{- else }}
-        {{- with (and (ne $.Page.BundleType "leaf") ($.Page.CurrentSection.Resources.Get $u.Path)) }}
-          {{- /* Destination is a section resource, and current page is not a leaf bundle. */}}
-          {{- $attrs = dict "href" .RelPermalink }}
-        {{- else }}
-          {{- with resources.Get $u.Path }}
-            {{- /* Destination is a global resource; drop query and fragment. */}}
-            {{- $attrs = dict "href" .RelPermalink }}
-          {{- else }}
-            {{- if eq $errorLevel "warning" }}
-              {{- warnf $msg }}
-              {{- if and $highlightBrokenLinks hugo.IsDevelopment }}
-                {{- $attrs = merge $attrs (dict "class" "broken") }}
-              {{- end }}
-            {{- else if eq $errorLevel "error" }}
-              {{- errorf $msg }}
-            {{- end }}
-          {{- end }}
+      {{- if eq $errorLevel "warning" }}
+        {{- warnf $msg }}
+        {{- if and $highlightBrokenLinks hugo.IsDevelopment }}
+          {{- $attrs = merge $attrs (dict "class" "broken") }}
         {{- end }}
+      {{- else if eq $errorLevel "error" }}
+        {{- errorf $msg }}
       {{- end }}
     {{- end }}
   {{- else }}
@@ -185,18 +174,18 @@ either of these shortcodes in conjunction with this render hook.
     {{- end }}
   {{- end }}
 {{- end }}
-{{- $attrs = merge $attrs (dict "title" (.Title | transform.HTMLEscape)) }}
 
 {{- /* Render anchor element. */ -}}
 <a
+  {{- with .Title }} title="{{ . }}" {{- end -}}
   {{- range $k, $v := $attrs }}
     {{- if $v }}
-      {{- printf " %s=%q" $k $v | safeHTMLAttr }}
+      {{- printf " %s=%q" $k ($v | transform.HTMLEscape) | safeHTMLAttr }}
     {{- end }}
   {{- end -}}
->{{ .Text | safeHTML }}</a>
+>{{ .Text }}</a>
 
-{{- define "partials/inline/h-rh-l/validate-fragment.html" }}
+{{- define "_partials/inline/h-rh-l/validate-fragment.html" }}
   {{- /*
   Validates the fragment portion of a link destination.
 
@@ -246,5 +235,4 @@ either of these shortcodes in conjunction with this render hook.
       {{- end }}
     {{- end }}
   {{- end }}
-
 {{- end -}}
