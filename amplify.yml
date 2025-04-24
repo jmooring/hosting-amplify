@@ -43,11 +43,10 @@ frontend:
         - "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --prefer-offline || true"
 
         # https://github.com/gohugoio/hugo/issues/9810
-        - git config --add core.quotepath false
+        - git config core.quotepath false
     build:
       commands:
         - hugo --gc --minify
-        - ./pagefind --site public
   artifacts:
     baseDirectory: public
     files:
