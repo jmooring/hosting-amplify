@@ -1,4 +1,4 @@
-baseURL       = 'https://example.org/'
+baseURL       = 'https://main.d13cr6yynbh5u8.amplifyapp.com/'
 languageCode  = 'en-US'
 title         = 'Hosting Test - Amplify'
 enableGitInfo = true
