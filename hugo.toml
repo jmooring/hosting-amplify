@@ -1,0 +1,23 @@
+baseURL = 'https://main.d13cr6yynbh5u8.amplifyapp.com/'
+locale  = 'en-US'
+title   = 'Hosting Test - Amplify'
+
+enableGitInfo = true
+
+[caches]
+  _merge = 'deep'
+
+[cascade]
+  _merge = 'deep'
+
+[markup]
+  _merge = 'deep'
+
+[security]
+  _merge = 'deep'
+
+[[module.imports]]
+  path = 'github.com/jmooring/hugo-module-feature-test'
+
+[[module.imports]]
+  path = 'hugo-theme-example'
